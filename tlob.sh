@@ -53,7 +53,7 @@ usage_message () {
 read_tokens () {
     if [ ! -f "$tokens_file" ]
     then
-        echo "Missing tokens.  Run setup.sh with code provided by TrueLayer"
+        echo "Missing tokens.  Run 'tlob.sh setup' with code provided by TrueLayer"
         exit
     fi
 
@@ -80,10 +80,11 @@ read_tokens () {
                 exit
             else
                 expiry=$(echo "$response" | jq ".expires_in+$EPOCHSECONDS")
+                scope="\"$scope\""
                 echo "$response" | jq ". | {access: .access_token, \
                                             expiry: $expiry, \
                                             refresh: .refresh_token, \
-                                            scope: .scope}" \
+                                            scope: $scope}" \
                                             > "$tokens_file"
                 access=$(cat "$tokens_file" | jq -r '.access')
             fi
